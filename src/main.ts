@@ -1,10 +1,10 @@
 import "./style.css";
 import { getVisitorId } from "./visitorId";
-import { pickDailyAlbum } from "./dailyAlbum";
+import { getLocalDateString, selectDailyAlbum } from "./dailyAlbum";
 import { albums } from "./albums";
 
 const visitorId = getVisitorId();
-const album = pickDailyAlbum(visitorId, albums);
+const album = selectDailyAlbum(visitorId, getLocalDateString(), albums);
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div class="card">
