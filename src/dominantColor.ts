@@ -1,0 +1,176 @@
+export interface Pixel {
+  r: number;
+  g: number;
+  b: number;
+  a: number;
+}
+
+export interface RGB {
+  r: number;
+  g: number;
+  b: number;
+}
+
+export interface ExtractedColors {
+  primary: string;
+  secondary: string;
+}
+
+const FALLBACK: RGB = { r: 255, g: 90, b: 54 };
+
+function quantize(value: number, step = 24): number {
+  return Math.round(value / step) * step;
+}
+
+function colorDistance(a: RGB, b: RGB): number {
+  return Math.sqrt((a.r - b.r) ** 2 + (a.g - b.g) ** 2 + (a.b - b.b) ** 2);
+}
+
+/**
+ * Finds the two most frequent sufficiently-distinct colors among the given
+ * pixels, ignoring transparent, near-white, near-black, and low-saturation
+ * ("gray") pixels -- these tend to be background padding rather than the
+ * artwork's actual color. Falls back to a fixed color pair if nothing
+ * qualifies (e.g. a fully monochrome or transparent image).
+ */
+export function pickDominantColors(pixels: Pixel[]): { primary: RGB; secondary: RGB } {
+  const buckets = new Map<string, { count: number; color: RGB }>();
+
+  for (const { r, g, b, a } of pixels) {
+    if (a < 200) continue;
+
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const isNearWhite = min > 235;
+    const isNearBlack = max < 20;
+    const isLowSaturation = max - min < 15;
+    if (isNearWhite || isNearBlack || isLowSaturation) continue;
+
+    const key = `${quantize(r)},${quantize(g)},${quantize(b)}`;
+    const existing = buckets.get(key);
+    if (existing) {
+      existing.count++;
+    } else {
+      buckets.set(key, { count: 1, color: { r, g, b } });
+    }
+  }
+
+  const sorted = [...buckets.values()].sort((a, b) => b.count - a.count);
+  if (sorted.length === 0) {
+    return { primary: FALLBACK, secondary: FALLBACK };
+  }
+
+  const primary = sorted[0].color;
+  const secondary =
+    sorted.find((c) => colorDistance(c.color, primary) > 60)?.color ??
+    sorted[Math.min(1, sorted.length - 1)].color;
+
+  return { primary, secondary };
+}
+
+export function rgbToHsl(r: number, g: number, b: number): [number, number, number] {
+  r /= 255;
+  g /= 255;
+  b /= 255;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const l = (max + min) / 2;
+  if (max === min) return [0, 0, l];
+  const d = max - min;
+  const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+  let h: number;
+  if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) * 60;
+  else if (max === g) h = ((b - r) / d + 2) * 60;
+  else h = ((r - g) / d + 4) * 60;
+  return [h, s, l];
+}
+
+function hslToRgb(h: number, s: number, l: number): RGB {
+  if (s === 0) {
+    const v = Math.round(l * 255);
+    return { r: v, g: v, b: v };
+  }
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+  const p = 2 * l - q;
+  const hue2rgb = (t: number) => {
+    if (t < 0) t += 1;
+    if (t > 1) t -= 1;
+    if (t < 1 / 6) return p + (q - p) * 6 * t;
+    if (t < 1 / 2) return q;
+    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+    return p;
+  };
+  const hNorm = h / 360;
+  return {
+    r: Math.round(hue2rgb(hNorm + 1 / 3) * 255),
+    g: Math.round(hue2rgb(hNorm) * 255),
+    b: Math.round(hue2rgb(hNorm - 1 / 3) * 255),
+  };
+}
+
+/**
+ * Forces a color into a "reads as light" range: saturated and mid-bright.
+ * Raw dominant colors are often muddy (browns, dusty grays) or too close in
+ * lightness to a light page background to show up at all -- this fixes both
+ * by pinning saturation/lightness regardless of what the source pixel was.
+ */
+export function vividize(color: RGB): RGB {
+  const [h, s, l] = rgbToHsl(color.r, color.g, color.b);
+  const vividS = Math.max(s, 0.7);
+  const vividL = Math.min(Math.max(l, 0.48), 0.58);
+  return hslToRgb(h, vividS, vividL);
+}
+
+function toHex({ r, g, b }: RGB): string {
+  const clamp = (n: number) => Math.max(0, Math.min(255, n));
+  return (
+    "#" +
+    [clamp(r), clamp(g), clamp(b)]
+      .map((v) => v.toString(16).padStart(2, "0"))
+      .join("")
+  );
+}
+
+/**
+ * Loads the image, samples its pixels via a small offscreen canvas, and
+ * returns a vivid primary/secondary color pair extracted from it. Thin,
+ * DOM-dependent wrapper around the pure functions above -- not unit tested,
+ * same as getVisitorId's cookie access.
+ */
+export async function extractDominantColors(imageUrl: string): Promise<ExtractedColors> {
+  try {
+    const img = await loadImage(imageUrl);
+    const size = 64;
+    const canvas = document.createElement("canvas");
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return { primary: toHex(FALLBACK), secondary: toHex(FALLBACK) };
+    ctx.drawImage(img, 0, 0, size, size);
+
+    const { data } = ctx.getImageData(0, 0, size, size); // throws if canvas is tainted
+    const pixels: Pixel[] = [];
+    for (let i = 0; i < data.length; i += 4) {
+      pixels.push({ r: data[i], g: data[i + 1], b: data[i + 2], a: data[i + 3] });
+    }
+
+    const { primary, secondary } = pickDominantColors(pixels);
+    return {
+      primary: toHex(vividize(primary)),
+      secondary: toHex(vividize(secondary)),
+    };
+  } catch (err) {
+    console.warn("dominant color extraction failed, using fallback", err);
+    return { primary: toHex(FALLBACK), secondary: toHex(FALLBACK) };
+  }
+}
+
+function loadImage(url: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = url;
+  });
+}

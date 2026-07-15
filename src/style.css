@@ -1,8 +1,9 @@
 :root {
-  --bg: #0e0e10;
-  --fg: #f4f4f5;
-  --muted: #9a9aa2;
-  --accent: #e8c874;
+  --page-bg: #d8d5d0;
+  --card-bg: #fdfbf8;
+  --muted: #666;
+  --color-primary: #ff5a36;
+  --color-secondary: #ff2d9e;
 }
 
 * {
@@ -13,8 +14,7 @@ html,
 body {
   margin: 0;
   min-height: 100%;
-  background: var(--bg);
-  color: var(--fg);
+  background: var(--page-bg);
   font-family:
     -apple-system,
     BlinkMacSystemFont,
@@ -31,20 +31,57 @@ body {
   align-items: center;
   justify-content: center;
   padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/*
+ * Two "spotlight" light pools behind the card, colored from the current
+ * album's extracted dominant/secondary colors (see src/dominantColor.ts).
+ * Sizes/positions are deliberately asymmetric -- validated in the
+ * theming prototype (see docs/adr/0001-live-client-side-color-extraction.md).
+ */
+.light {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.light-primary {
+  width: 72vmax;
+  height: 72vmax;
+  max-width: 760px;
+  max-height: 760px;
+  top: -20%;
+  left: -14%;
+  opacity: 0.95;
+  background: radial-gradient(closest-side, var(--color-primary) 70%, transparent 100%);
+}
+
+.light-secondary {
+  width: 40vmax;
+  height: 40vmax;
+  max-width: 420px;
+  max-height: 420px;
+  bottom: -6%;
+  right: -4%;
+  opacity: 0.8;
+  background: radial-gradient(closest-side, var(--color-secondary) 70%, transparent 100%);
 }
 
 .card {
-  background: #1a1a1e;
+  background: var(--card-bg);
   border-radius: 16px;
   padding: 2rem;
   max-width: 380px;
   width: 100%;
   text-align: center;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 1;
 }
 
 .eyebrow {
-  color: var(--accent);
+  color: var(--color-primary);
   font-size: 0.75rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -58,12 +95,14 @@ body {
   border-radius: 10px;
   margin-bottom: 1.5rem;
   object-fit: cover;
-  background: linear-gradient(135deg, #4a3f6b, #b0577d 55%, #e8c874);
+  background: #eee;
 }
 
 .title {
   font-size: 1.5rem;
+  font-weight: 800;
   margin: 0 0 0.35rem;
+  color: var(--color-secondary);
 }
 
 .meta {
