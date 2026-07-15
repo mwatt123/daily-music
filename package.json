@@ -8,7 +8,8 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "curate:extract": "tsx scripts/extractPlayCounts.ts"
+    "curate:extract": "tsx scripts/extractPlayCounts.ts",
+    "curate:apply": "tsx scripts/curateAlbums.ts"
   },
   "devDependencies": {
     "@types/node": "^26.1.1",

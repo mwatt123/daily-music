@@ -2,3 +2,4 @@ node_modules/
 dist/
 .claude/settings.local.json
 Library.xml
+review-report.json

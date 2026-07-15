@@ -14,8 +14,10 @@ export interface ClassifiedAlbumRow extends AlbumKey {
   classification: AlbumClassification;
 }
 
+export type Confidence = "high" | "low";
+
 export interface DefinitiveAlbumPick extends AlbumKey {
-  confidence: "high" | "low";
+  confidence: Confidence;
 }
 
 const ELIGIBLE_CLASSIFICATIONS: readonly AlbumClassification[] = ["studio", "reissue"];
@@ -24,7 +26,7 @@ const ELIGIBLE_CLASSIFICATIONS: readonly AlbumClassification[] = ["studio", "rei
  * which a pick is flagged "low" confidence rather than trusted outright. */
 const LOW_CONFIDENCE_MARGIN = 0.2;
 
-function confidenceFor(top: ClassifiedAlbumRow, runnerUp: ClassifiedAlbumRow | undefined): "high" | "low" {
+function confidenceFor(top: ClassifiedAlbumRow, runnerUp: ClassifiedAlbumRow | undefined): Confidence {
   if (!runnerUp) return "high";
   if (top.averagePlayCount === runnerUp.averagePlayCount) return "low";
   const relativeMargin = (top.averagePlayCount - runnerUp.averagePlayCount) / top.averagePlayCount;
