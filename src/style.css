@@ -1,9 +1,10 @@
 :root {
-  --page-bg: #d8d5d0;
-  --card-bg: #fdfbf8;
-  --muted: #666;
-  --color-primary: #ff5a36;
-  --color-secondary: #ff2d9e;
+  /* Primary = fullscreen background, secondary = all text. White/near-black
+   * until real colors extract (see src/dominantColor.ts); the JS FALLBACK
+   * used on extraction failure is a separate value that flows through the
+   * same vividize + ensureContrast pipeline as a real extraction. */
+  --color-primary: #ffffff;
+  --color-secondary: #141414;
 }
 
 * {
@@ -14,7 +15,11 @@ html,
 body {
   margin: 0;
   min-height: 100%;
-  background: var(--page-bg);
+  background: var(--color-primary);
+  color: var(--color-secondary);
+  transition:
+    background-color 200ms ease,
+    color 200ms ease;
   font-family:
     -apple-system,
     BlinkMacSystemFont,
@@ -31,57 +36,15 @@ body {
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  position: relative;
-  overflow: hidden;
 }
 
-/*
- * Two "spotlight" light pools behind the card, colored from the current
- * album's extracted dominant/secondary colors (see src/dominantColor.ts).
- * Sizes/positions are deliberately asymmetric -- validated in the
- * theming prototype (see docs/adr/0001-live-client-side-color-extraction.md).
- */
-.light {
-  position: absolute;
-  border-radius: 50%;
-}
-
-.light-primary {
-  width: 72vmax;
-  height: 72vmax;
-  max-width: 760px;
-  max-height: 760px;
-  top: -20%;
-  left: -14%;
-  opacity: 0.95;
-  background: radial-gradient(closest-side, var(--color-primary) 70%, transparent 100%);
-}
-
-.light-secondary {
-  width: 40vmax;
-  height: 40vmax;
-  max-width: 420px;
-  max-height: 420px;
-  bottom: -6%;
-  right: -4%;
-  opacity: 0.8;
-  background: radial-gradient(closest-side, var(--color-secondary) 70%, transparent 100%);
-}
-
-.card {
-  background: var(--card-bg);
-  border-radius: 16px;
-  padding: 2rem;
+.content {
   max-width: 380px;
   width: 100%;
   text-align: center;
-  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.2);
-  position: relative;
-  z-index: 1;
 }
 
 .eyebrow {
-  color: var(--color-primary);
   font-size: 0.75rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -96,16 +59,16 @@ body {
   margin-bottom: 1.5rem;
   object-fit: cover;
   background: #eee;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.25);
 }
 
 .title {
   font-size: 1.5rem;
   font-weight: 800;
   margin: 0 0 0.35rem;
-  color: var(--color-secondary);
 }
 
 .meta {
-  color: var(--muted);
   font-size: 0.95rem;
 }

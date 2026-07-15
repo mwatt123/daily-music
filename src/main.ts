@@ -8,9 +8,7 @@ const visitorId = getVisitorId();
 const album = selectDailyAlbum(visitorId, getLocalDateString(), albums);
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
-  <div class="light light-primary"></div>
-  <div class="light light-secondary"></div>
-  <div class="card">
+  <div class="content">
     <div class="eyebrow">Today's Pick</div>
     <img class="cover-art" src="${album.coverArtUrl}" alt="${album.title} cover art" />
     <h1 class="title">${album.title}</h1>
@@ -20,7 +18,7 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 
 // Page renders immediately with the fallback colors set in style.css;
 // once extraction resolves, swap the two custom properties in place so the
-// lights/text shift to the album's real colors without re-rendering markup.
+// background/text transition to the album's real colors without re-rendering markup.
 extractDominantColors(album.coverArtUrl).then(({ primary, secondary }) => {
   document.documentElement.style.setProperty("--color-primary", primary);
   document.documentElement.style.setProperty("--color-secondary", secondary);

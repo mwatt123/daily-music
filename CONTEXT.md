@@ -9,5 +9,5 @@ The most visually prominent color in an album's cover art, extracted client-side
 _Avoid_: Average color (a different, rejected computation), primary color
 
 **Secondary Color**:
-A second color extracted alongside the Dominant Color from the same artwork, chosen to be sufficiently different from it. Used together as a pair to theme a page around an album, rather than a single flat tint.
+A second color extracted alongside the Dominant Color from the same artwork, chosen to be sufficiently different from it. Its lightness (not hue) is further adjusted after extraction to guarantee legible text contrast — at least a WCAG AA 4.5:1 ratio — against the Dominant Color, since Secondary Color is used exclusively for text rendered on a Dominant Color background.
 _Avoid_: Accent color, theme color

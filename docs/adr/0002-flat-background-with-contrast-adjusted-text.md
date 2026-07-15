@@ -1,0 +1,9 @@
+# Full-bleed flat color background with contrast-adjusted text, replacing card and glow rendering
+
+The original theming design (prototyped alongside the extraction work in ADR-0001) rendered the extracted Dominant/Secondary colors as two radial-gradient "light" glows behind a white card, with each color independently vividized into a similar mid-lightness, high-saturation range — tuned to pop as glows against a neutral page background, not to contrast against each other.
+
+We redesigned the page to drop the card and glows: Dominant Color is now the fullscreen flat page background, and Secondary Color is used for all text (eyebrow label, title, and meta line — previously the eyebrow used Dominant Color and the meta line used a fixed gray). Because two independently-vivid extracted colors aren't guaranteed to be legible against each other, Secondary Color's lightness is now forced (hue preserved from extraction) toward whichever end of the lightness scale gives at least a 4.5:1 WCAG AA contrast ratio against Dominant Color. This is implemented as a pure, unit-tested function alongside `pickDominantColors` and `vividize`, and it applies equally to the extraction-failure fallback pair, so a monochrome or CORS-blocked image can no longer produce illegible text by accident.
+
+This does not revisit ADR-0001: extraction still happens live in the browser, for the same reasons recorded there. Only the rendering treatment of the resulting colors has changed.
+
+**Consequences**: the two glow elements and the card are removed from the DOM/CSS entirely; the contrast-adjustment step is a new testable seam with a concrete pass/fail bar (4.5:1) rather than an informal visual check; cover art gets a subtle border/shadow since it can no longer rely on a card boundary to stay visually separated from a background sampled from the same artwork.

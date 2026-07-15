@@ -121,6 +121,58 @@ export function vividize(color: RGB): RGB {
   return hslToRgb(h, vividS, vividL);
 }
 
+/** WCAG relative luminance of an sRGB color, in [0, 1]. */
+export function relativeLuminance({ r, g, b }: RGB): number {
+  const channel = (v: number) => {
+    const c = v / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  };
+  return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
+}
+
+/** WCAG contrast ratio between two colors, in [1, 21]. Order-independent. */
+export function contrastRatio(a: RGB, b: RGB): number {
+  const lA = relativeLuminance(a);
+  const lB = relativeLuminance(b);
+  const lighter = Math.max(lA, lB);
+  const darker = Math.min(lA, lB);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+/**
+ * Adjusts `color`'s lightness (hue and saturation untouched) until its
+ * contrast ratio against `background` meets `minRatio`, pushing toward
+ * whichever end of the lightness scale (black or white) contrasts better.
+ * Two independently-vivid colors aren't guaranteed to be legible together,
+ * so this is the seam that guarantees text stays readable regardless of
+ * what the source artwork's colors happen to be.
+ */
+export function ensureContrast(color: RGB, background: RGB, minRatio = 4.5): RGB {
+  if (contrastRatio(color, background) >= minRatio) return color;
+
+  const [h, s, l] = rgbToHsl(color.r, color.g, color.b);
+  const towardWhite = contrastRatio(hslToRgb(h, s, 1), background);
+  const towardBlack = contrastRatio(hslToRgb(h, s, 0), background);
+  const target = towardWhite >= towardBlack ? 1 : 0;
+
+  let lo = l;
+  let hi = target;
+  let best = hslToRgb(h, s, target);
+
+  for (let i = 0; i < 20; i++) {
+    const mid = (lo + hi) / 2;
+    const candidate = hslToRgb(h, s, mid);
+    if (contrastRatio(candidate, background) >= minRatio) {
+      best = candidate;
+      hi = mid;
+    } else {
+      lo = mid;
+    }
+  }
+
+  return best;
+}
+
 function toHex({ r, g, b }: RGB): string {
   const clamp = (n: number) => Math.max(0, Math.min(255, n));
   return (
@@ -132,10 +184,22 @@ function toHex({ r, g, b }: RGB): string {
 }
 
 /**
+ * Vividizes primary and forces secondary's lightness to stay legible against
+ * it (see ensureContrast). Applied uniformly whether the pair came from real
+ * pixels or the FALLBACK constant, so an extraction failure can't produce an
+ * illegible primary/secondary pair by accident.
+ */
+function finalizeColors(primary: RGB, secondary: RGB): ExtractedColors {
+  const vividPrimary = vividize(primary);
+  const vividSecondary = ensureContrast(vividize(secondary), vividPrimary);
+  return { primary: toHex(vividPrimary), secondary: toHex(vividSecondary) };
+}
+
+/**
  * Loads the image, samples its pixels via a small offscreen canvas, and
- * returns a vivid primary/secondary color pair extracted from it. Thin,
- * DOM-dependent wrapper around the pure functions above -- not unit tested,
- * same as getVisitorId's cookie access.
+ * returns a vivid, contrast-safe primary/secondary color pair extracted
+ * from it. Thin, DOM-dependent wrapper around the pure functions above --
+ * not unit tested, same as getVisitorId's cookie access.
  */
 export async function extractDominantColors(imageUrl: string): Promise<ExtractedColors> {
   try {
@@ -145,7 +209,7 @@ export async function extractDominantColors(imageUrl: string): Promise<Extracted
     canvas.width = size;
     canvas.height = size;
     const ctx = canvas.getContext("2d");
-    if (!ctx) return { primary: toHex(FALLBACK), secondary: toHex(FALLBACK) };
+    if (!ctx) return finalizeColors(FALLBACK, FALLBACK);
     ctx.drawImage(img, 0, 0, size, size);
 
     const { data } = ctx.getImageData(0, 0, size, size); // throws if canvas is tainted
@@ -155,13 +219,10 @@ export async function extractDominantColors(imageUrl: string): Promise<Extracted
     }
 
     const { primary, secondary } = pickDominantColors(pixels);
-    return {
-      primary: toHex(vividize(primary)),
-      secondary: toHex(vividize(secondary)),
-    };
+    return finalizeColors(primary, secondary);
   } catch (err) {
     console.warn("dominant color extraction failed, using fallback", err);
-    return { primary: toHex(FALLBACK), secondary: toHex(FALLBACK) };
+    return finalizeColors(FALLBACK, FALLBACK);
   }
 }
 
