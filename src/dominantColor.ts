@@ -18,6 +18,13 @@ export interface ExtractedColors {
 
 const FALLBACK: RGB = { r: 255, g: 90, b: 54 };
 
+/**
+ * Edge length of the square pixel grid both acquirers sample the artwork into
+ * (64x64 = 4096 pixels). Shared so the browser canvas and the Node precompute
+ * build the same-sized frequency histogram and can't drift apart.
+ */
+export const SAMPLE_SIZE = 64;
+
 function quantize(value: number, step = 24): number {
   return Math.round(value / step) * step;
 }
@@ -196,6 +203,18 @@ function finalizeColors(primary: RGB, secondary: RGB): ExtractedColors {
 }
 
 /**
+ * The renderer-agnostic core: turns sampled pixels into a vivid, contrast-safe
+ * primary/secondary pair. Both the browser canvas path and the Node precompute
+ * path acquire pixels their own way, then hand off here. Passing no qualifying
+ * pixels (e.g. an empty array) yields the FALLBACK pair, which doubles as the
+ * failure color for either acquirer.
+ */
+export function extractColorsFromPixels(pixels: Pixel[]): ExtractedColors {
+  const { primary, secondary } = pickDominantColors(pixels);
+  return finalizeColors(primary, secondary);
+}
+
+/**
  * Loads the image, samples its pixels via a small offscreen canvas, and
  * returns a vivid, contrast-safe primary/secondary color pair extracted
  * from it. Thin, DOM-dependent wrapper around the pure functions above --
@@ -204,25 +223,23 @@ function finalizeColors(primary: RGB, secondary: RGB): ExtractedColors {
 export async function extractDominantColors(imageUrl: string): Promise<ExtractedColors> {
   try {
     const img = await loadImage(imageUrl);
-    const size = 64;
     const canvas = document.createElement("canvas");
-    canvas.width = size;
-    canvas.height = size;
+    canvas.width = SAMPLE_SIZE;
+    canvas.height = SAMPLE_SIZE;
     const ctx = canvas.getContext("2d");
-    if (!ctx) return finalizeColors(FALLBACK, FALLBACK);
-    ctx.drawImage(img, 0, 0, size, size);
+    if (!ctx) return extractColorsFromPixels([]);
+    ctx.drawImage(img, 0, 0, SAMPLE_SIZE, SAMPLE_SIZE);
 
-    const { data } = ctx.getImageData(0, 0, size, size); // throws if canvas is tainted
+    const { data } = ctx.getImageData(0, 0, SAMPLE_SIZE, SAMPLE_SIZE); // throws if canvas is tainted
     const pixels: Pixel[] = [];
     for (let i = 0; i < data.length; i += 4) {
       pixels.push({ r: data[i], g: data[i + 1], b: data[i + 2], a: data[i + 3] });
     }
 
-    const { primary, secondary } = pickDominantColors(pixels);
-    return finalizeColors(primary, secondary);
+    return extractColorsFromPixels(pixels);
   } catch (err) {
     console.warn("dominant color extraction failed, using fallback", err);
-    return finalizeColors(FALLBACK, FALLBACK);
+    return extractColorsFromPixels([]);
   }
 }
 
