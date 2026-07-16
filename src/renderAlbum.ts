@@ -1,4 +1,5 @@
 import type { Album } from "./albums";
+import type { ExtractedColors } from "./dominantColor";
 
 /**
  * Renders the daily album card into `container`. Shared verbatim by the web app
@@ -25,4 +26,21 @@ export function renderAlbum(container: HTMLElement, album: Album): void {
 export function applyColors(primary: string, secondary: string): void {
   document.documentElement.style.setProperty("--color-primary", primary);
   document.documentElement.style.setProperty("--color-secondary", secondary);
+}
+
+/**
+ * Applies the precomputed colors for `coverArtUrl` from the bundled table, if it
+ * has an entry. Both surfaces build the same table offline (see src/albumColors.ts)
+ * and neither samples at runtime, so this owns the one shared rule: a cover with
+ * no entry (e.g. its URL changed since the last curate:colors run) keeps the
+ * style.css fallback rather than failing.
+ */
+export function applyAlbumColors(
+  colors: Record<string, ExtractedColors>,
+  coverArtUrl: string,
+): void {
+  const precomputed = colors[coverArtUrl];
+  if (precomputed) {
+    applyColors(precomputed.primary, precomputed.secondary);
+  }
 }

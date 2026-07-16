@@ -183,8 +183,8 @@ describe("ensureContrast", () => {
   });
 });
 
-// The renderer-agnostic seam shared by the browser canvas path and the Node
-// precompute path -- exercised here directly on pixel arrays.
+// The renderer-agnostic seam behind the Node precompute path -- exercised here
+// directly on pixel arrays.
 describe("extractColorsFromPixels", () => {
   it("returns hex colors whose contrast is legible", () => {
     const pixels: Pixel[] = [

@@ -2,7 +2,7 @@ import { getVisitorId, type VisitorIdStore } from "./visitorId";
 import { getLocalDateString, selectDailyAlbum } from "./dailyAlbum";
 import type { Album } from "./albums";
 import type { ExtractedColors } from "./dominantColor";
-import { applyColors, renderAlbum } from "./renderAlbum";
+import { applyAlbumColors, renderAlbum } from "./renderAlbum";
 
 export interface NewTabDeps {
   container: HTMLElement;
@@ -30,11 +30,7 @@ export async function initNewTab(deps: NewTabDeps): Promise<Album> {
   const album = selectDailyAlbum(visitorId, date ?? getLocalDateString(), albums);
 
   renderAlbum(container, album);
-
-  const precomputed = colors[album.coverArtUrl];
-  if (precomputed) {
-    applyColors(precomputed.primary, precomputed.secondary);
-  }
+  applyAlbumColors(colors, album.coverArtUrl);
 
   return album;
 }
