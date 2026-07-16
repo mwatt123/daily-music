@@ -42,8 +42,8 @@ Less scrolling. More listening.
 | --- | --- | --- |
 | Store icon | 128×128 PNG | `extension/icons/icon128.png` (source: `store-assets/icon.svg`) |
 | Screenshot 1 | 1280×800 PNG | `store-assets/screenshots/screenshot1.png` — A Love Supreme (red-orange theme) |
-| Screenshot 2 | 1280×800 PNG | `store-assets/screenshots/screenshot2.png` — Pet Sounds (green theme) |
-| Screenshot 3 | 1280×800 PNG | `store-assets/screenshots/screenshot3.png` — Hounds of Love (purple theme) |
+| Screenshot 2 | 1280×800 PNG | `store-assets/screenshots/screenshot2.png` — Lemonade (teal theme) |
+| Screenshot 3 | 1280×800 PNG | `store-assets/screenshots/screenshot3.png` — Brighten the Corners (blue theme) |
 | Small promo tile (optional) | 440×280 PNG | `store-assets/promo-tile.png` (source: `store-assets/promo-tile.svg`) |
 
 The three screenshots deliberately span distinct hues to show the cover-driven
