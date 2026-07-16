@@ -5,4 +5,4 @@ dist-extension/
 .claude/settings.local.json
 Library.xml
 review-report.json
-still-wrong-covers.json
+still-wrong-covers.json*.zip
