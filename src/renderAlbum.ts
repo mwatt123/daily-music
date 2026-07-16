@@ -1,0 +1,28 @@
+import type { Album } from "./albums";
+
+/**
+ * Renders the daily album card into `container`. Shared verbatim by the web app
+ * (`main.ts`) and the extension new-tab page (`newtab.ts`) so the markup has a
+ * single source of truth; the two surfaces differ only in how they source the
+ * visitor id and the colors, not in what they draw.
+ */
+export function renderAlbum(container: HTMLElement, album: Album): void {
+  container.innerHTML = `
+    <div class="content">
+      <div class="eyebrow">Today's Pick</div>
+      <img class="cover-art" src="${album.coverArtUrl}" alt="${album.title} cover art" />
+      <h1 class="title">${album.title}</h1>
+      <div class="meta">${album.artist} &middot; ${album.year}</div>
+    </div>
+  `;
+}
+
+/**
+ * Swaps in the album's primary/secondary colors by setting the two CSS custom
+ * properties the stylesheet reads. The page renders first with the fallback
+ * colors in style.css, then this transitions them in place without re-rendering.
+ */
+export function applyColors(primary: string, secondary: string): void {
+  document.documentElement.style.setProperty("--color-primary", primary);
+  document.documentElement.style.setProperty("--color-secondary", secondary);
+}
