@@ -42,7 +42,7 @@ Less scrolling. More listening.
 | --- | --- | --- |
 | Store icon | 128×128 PNG | `extension/icons/icon128.png` (source: `store-assets/icon.svg`) |
 | Screenshot 1 | 1280×800 PNG | `store-assets/screenshots/screenshot1.png` — On Fire (orange theme) |
-| Screenshot 2 | 1280×800 PNG | `store-assets/screenshots/screenshot2.png` — Lemonade (teal theme) |
+| Screenshot 2 | 1280×800 PNG | `store-assets/screenshots/screenshot2.png` — Buhloone Mindstate (teal theme) |
 | Screenshot 3 | 1280×800 PNG | `store-assets/screenshots/screenshot3.png` — New Amerykah Part One (indigo theme) |
 | Small promo tile (optional) | 440×280 PNG | `store-assets/promo-tile.png` (source: `store-assets/promo-tile.svg`) |
 
