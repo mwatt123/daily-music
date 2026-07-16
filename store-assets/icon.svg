@@ -1,20 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
-  <defs>
-    <radialGradient id="vinyl" cx="42%" cy="38%" r="72%">
-      <stop offset="0%" stop-color="#2b2b2b" />
-      <stop offset="100%" stop-color="#111111" />
-    </radialGradient>
-  </defs>
-  <rect width="128" height="128" rx="28" fill="#ff5a36" />
-  <circle cx="64" cy="64" r="44" fill="url(#vinyl)" />
-  <g fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="1">
-    <circle cx="64" cy="64" r="37" />
-    <circle cx="64" cy="64" r="31" />
-    <circle cx="64" cy="64" r="25" />
+  <!-- matches the promo "daily pick" hero: orange sleeve, black vinyl, gold label -->
+  <rect width="128" height="128" rx="28" fill="#e94f37" />
+  <g transform="translate(64 64)">
+    <circle r="46" fill="#141414" />
+    <g fill="none" stroke="#3d3a38" stroke-width="1.6">
+      <circle r="39" /><circle r="32" /><circle r="25" />
+    </g>
+    <path d="M -26.5 -30 A 40.7 40.7 0 0 1 30 -26.5" fill="none" stroke="#ffffff"
+      stroke-opacity="0.16" stroke-width="3.5" stroke-linecap="round" />
+    <circle r="15" fill="#f0a831" />
+    <circle r="3.5" fill="#141414" />
   </g>
-  <path d="M 34 40 A 34 34 0 0 1 92 44" fill="none" stroke="#ffffff"
-    stroke-opacity="0.18" stroke-width="3" stroke-linecap="round" />
-  <circle cx="64" cy="64" r="15" fill="#fcf2ee" />
-  <circle cx="64" cy="64" r="15" fill="none" stroke="#ff5a36" stroke-opacity="0.5" stroke-width="2" />
-  <circle cx="64" cy="64" r="2.6" fill="#1a1a1a" />
 </svg>
