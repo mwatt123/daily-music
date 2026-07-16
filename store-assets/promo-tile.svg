@@ -1,28 +1,29 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="440" height="280" viewBox="0 0 440 280">
   <defs>
-    <radialGradient id="v" cx="42%" cy="38%" r="72%">
-      <stop offset="0%" stop-color="#2b2b2b" />
-      <stop offset="100%" stop-color="#111111" />
-    </radialGradient>
+    <filter id="sh" x="-30%" y="-30%" width="160%" height="170%">
+      <feDropShadow dx="0" dy="7" stdDeviation="11" flood-color="#000" flood-opacity="0.30"/>
+    </filter>
+    <clipPath id="cov"><rect x="159" y="54" width="122" height="122" rx="9"/></clipPath>
   </defs>
-  <rect width="440" height="280" fill="#ff5a36" />
-  <g transform="translate(84 140)">
-    <circle r="78" fill="url(#v)" />
-    <g fill="none" stroke="#000000" stroke-opacity="0.32" stroke-width="2">
-      <circle r="65" />
-      <circle r="54" />
-      <circle r="43" />
+
+  <!-- daily-palette spectrum: the page takes on each cover's colors -->
+  <rect width="88" height="280" x="0"   fill="#e94f37"/>
+  <rect width="88" height="280" x="88"  fill="#f0a831"/>
+  <rect width="88" height="280" x="176" fill="#1f9e8b"/>
+  <rect width="88" height="280" x="264" fill="#3d5a98"/>
+  <rect width="88" height="280" x="352" fill="#c14b8a"/>
+
+  <!-- today's pick: a floating cover card with a vinyl -->
+  <rect x="145" y="40" width="150" height="200" rx="16" fill="#faf7f1" filter="url(#sh)"/>
+  <g clip-path="url(#cov)">
+    <rect x="159" y="54" width="122" height="122" fill="#e94f37"/>
+    <g transform="translate(220 115)">
+      <circle r="52" fill="#141414"/>
+      <g fill="none" stroke="#3d3a38" stroke-width="1.6"><circle r="44"/><circle r="36"/><circle r="28"/></g>
+      <path d="M -30 -34 A 46 46 0 0 1 34 -30" fill="none" stroke="#fff" stroke-opacity="0.16" stroke-width="4" stroke-linecap="round"/>
+      <circle r="17" fill="#f0a831"/><circle r="4" fill="#141414"/>
     </g>
-    <path d="M -53 -50 A 60 60 0 0 1 50 -53" fill="none" stroke="#ffffff"
-      stroke-opacity="0.18" stroke-width="5" stroke-linecap="round" />
-    <circle r="27" fill="#fcf2ee" />
-    <circle r="27" fill="none" stroke="#ff5a36" stroke-opacity="0.5" stroke-width="3" />
-    <circle r="4.5" fill="#1a1a1a" />
   </g>
-  <text x="184" y="130" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif"
-    font-size="29" font-weight="800" fill="#1a1a1a">Broken Record</text>
-  <text x="185" y="162" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif"
-    font-size="16" font-weight="500" fill="#1a1a1a" fill-opacity="0.82">One album a day,</text>
-  <text x="185" y="184" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif"
-    font-size="16" font-weight="500" fill="#1a1a1a" fill-opacity="0.82">every new tab.</text>
+  <rect x="159" y="190" width="104" height="12" rx="6" fill="#2a2a2a"/>
+  <rect x="159" y="210" width="66"  height="10" rx="5" fill="#b3aca2"/>
 </svg>

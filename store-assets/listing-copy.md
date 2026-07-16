@@ -45,9 +45,14 @@ Less scrolling. More listening.
 | Screenshot 2 | 1280×800 PNG | `store-assets/screenshots/screenshot2.png` — Buhloone Mindstate (teal theme) |
 | Screenshot 3 | 1280×800 PNG | `store-assets/screenshots/screenshot3.png` — New Amerykah Part Two (indigo theme) |
 | Small promo tile (optional) | 440×280 PNG | `store-assets/promo-tile.png` (source: `store-assets/promo-tile.svg`) |
+| Marquee promo tile (optional) | 1400×560 PNG | `store-assets/marquee-tile.png` (source: `store-assets/marquee-tile.svg`) |
 
 The three screenshots deliberately span distinct hues to show the cover-driven
-theming — the extension's defining feature.
+theming — the extension's defining feature. Both promo tiles use the same
+device: a "today's pick" cover card (a vinyl in a colored sleeve, title/artist
+as placeholder bars) floating on a five-hue spectrum, echoing how the new-tab
+page takes on each cover's colors. The marquee fans out three picks with
+distinct sleeve/label colors to show the daily variety.
 
 ## Regenerating
 
