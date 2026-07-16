@@ -12,24 +12,24 @@ Broken Record
 ## Short description (max 132 chars)
 
 ```
-A hand-picked album on every new tab, with the page themed to its cover art. A fresh pick each day — no sign-in, no tracking.
+A new tab, a new record — one hand-picked album a day, dressed in the colors of its cover. On repeat, minus tracking.
 ```
 
 ## Detailed description
 
 ```
-One album a day, every new tab.
+Your new tab has great taste.
 
-Broken Record replaces your new tab page with a single hand-picked album
-recommendation, with the whole page colored to match the album's cover art.
-Open a new tab, get one record worth your time — then a new one tomorrow.
+Broken Record hands you one hand-picked album every day and themes the whole
+page to its cover art — a tiny detour into something worth hearing, every time
+you open a tab. One record today, another tomorrow.
 
-• A new, hand-picked album every day
-• The page themes itself to the album's cover art
-• The same pick stays put all day, across every new tab you open
-• Private by design — no accounts, no analytics, nothing leaves your device
+• One carefully chosen album a day — no endless feed
+• The page takes on the album's colors
+• Same pick all day, across every tab
+• Private by design — no sign-in, no tracking
 
-Just open a new tab.
+Less scrolling. More listening.
 ```
 
 ## Category & language
