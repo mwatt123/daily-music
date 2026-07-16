@@ -9,7 +9,13 @@
     "preview": "vite preview",
     "test": "vitest run",
     "curate:extract": "tsx scripts/extractPlayCounts.ts",
-    "curate:apply": "tsx scripts/curateAlbums.ts"
+    "curate:apply": "tsx scripts/curateAlbums.ts",
+    "curate:apply-review": "tsx scripts/applyReviewDecisionsCli.ts",
+    "curate:retry-review": "tsx scripts/retryReviewCoverArt.ts",
+    "curate:apply-round2": "tsx scripts/applyRound2Decisions.ts",
+    "curate:remove": "tsx scripts/removeAlbumsCli.ts",
+    "curate:refresh-covers": "tsx scripts/refreshCoverArtCli.ts",
+    "curate:add": "tsx scripts/addAlbumsCli.ts"
   },
   "devDependencies": {
     "@types/node": "^26.1.1",
