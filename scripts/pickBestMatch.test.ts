@@ -59,4 +59,37 @@ describe("pickBestMatch", () => {
       year: 1969,
     });
   });
+
+  it("falls back to a remastered/anniversary edition when no exact title exists", () => {
+    const results = [result({ collectionName: "Abbey Road (2019 Remaster)" })];
+
+    expect(pickBestMatch(results, { artist: "The Beatles", album: "Abbey Road" })).toEqual({
+      coverArtUrl: "https://example.com/600x600bb.jpg",
+      year: 1969,
+    });
+  });
+
+  it("prefers an exact match over an edition when both are present", () => {
+    const results = [
+      result({ collectionName: "Abbey Road (2019 Remaster)", artworkUrl100: "https://example.com/remaster/100x100bb.jpg" }),
+      result({ collectionName: "Abbey Road" }),
+    ];
+
+    expect(pickBestMatch(results, { artist: "The Beatles", album: "Abbey Road" })).toEqual({
+      coverArtUrl: "https://example.com/600x600bb.jpg",
+      year: 1969,
+    });
+  });
+
+  it("does not treat a same-prefix single as an edition match", () => {
+    const results = [result({ collectionName: "Actor Out of Work - Single" })];
+
+    expect(pickBestMatch(results, { artist: "St. Vincent", album: "Actor" })).toBeNull();
+  });
+
+  it("does not treat a parenthetical single suffix as an edition match", () => {
+    const results = [result({ collectionName: "Abbey Road (Single Version)" })];
+
+    expect(pickBestMatch(results, { artist: "The Beatles", album: "Abbey Road" })).toBeNull();
+  });
 });

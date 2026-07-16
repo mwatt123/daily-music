@@ -12,6 +12,14 @@ function isAddOrReplace(change: AlbumChange): change is Extract<AlbumChange, { t
   return change.type !== "remove";
 }
 
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/** Milliseconds to wait between iTunes Search API calls, to stay under its
+ * undocumented rate limit across hundreds of sequential lookups. */
+const REQUEST_PACING_MS = 1500;
+
 const classifiedRowsPath = process.argv[2];
 if (!classifiedRowsPath) {
   console.error("Usage: npm run curate:apply -- <path-to-classified-rows.json>");
@@ -27,8 +35,11 @@ const reviewReport: Array<AlbumChange & { reason: string }> = changes
   .map((change) => ({ ...change, reason: "removal always requires manual review" }));
 
 const verified: VerifiedChange[] = [];
+const toVerify = changes.filter(isAddOrReplace);
 
-for (const change of changes.filter(isAddOrReplace)) {
+for (const [index, change] of toVerify.entries()) {
+  if (index > 0) await sleep(REQUEST_PACING_MS);
+
   const coverArt = await fetchCoverArt({ artist: change.artist, album: change.toAlbum });
   if (!coverArt) {
     reviewReport.push({ ...change, reason: "no confident cover art match found" });
@@ -41,6 +52,10 @@ for (const change of changes.filter(isAddOrReplace)) {
   }
 
   verified.push({ ...change, coverArtUrl: coverArt.coverArtUrl, year: coverArt.year });
+
+  if ((index + 1) % 50 === 0) {
+    console.log(`Verified ${index + 1}/${toVerify.length}...`);
+  }
 }
 
 const updatedAlbums = applyVerifiedChanges(albums, verified);

@@ -18,17 +18,36 @@ function normalize(value: string): string {
   return value.trim().toLowerCase();
 }
 
-function isConfidentMatch(result: ITunesSearchResult, { artist, album }: AlbumKey): boolean {
+function isAlbumByArtist(result: ITunesSearchResult, artist: string): boolean {
   return (
     result.wrapperType === "collection" &&
     result.collectionType === "Album" &&
-    normalize(result.artistName) === normalize(artist) &&
-    normalize(result.collectionName) === normalize(album)
+    normalize(result.artistName) === normalize(artist)
   );
 }
 
+function isExactMatch(result: ITunesSearchResult, { artist, album }: AlbumKey): boolean {
+  return isAlbumByArtist(result, artist) && normalize(result.collectionName) === normalize(album);
+}
+
+/** Many classic albums are no longer sold under their plain title -- iTunes
+ * lists only a remastered/anniversary edition instead. Accept a title that's
+ * the target plus a parenthetical suffix (e.g. "In Utero (20th Anniversary
+ * Edition)"), but not a suffix that suggests a single or other decoy. */
+function isEditionMatch(result: ITunesSearchResult, { artist, album }: AlbumKey): boolean {
+  if (!isAlbumByArtist(result, artist)) return false;
+
+  const name = normalize(result.collectionName);
+  const prefix = `${normalize(album)} (`;
+  if (!name.startsWith(prefix) || !name.endsWith(")")) return false;
+
+  const suffix = name.slice(prefix.length, -1);
+  return !suffix.includes("single");
+}
+
 export function pickBestMatch(results: ITunesSearchResult[], key: AlbumKey): CoverArtMatch | null {
-  const match = results.find((result) => isConfidentMatch(result, key));
+  const match =
+    results.find((result) => isExactMatch(result, key)) ?? results.find((result) => isEditionMatch(result, key));
   if (!match) return null;
 
   return {
