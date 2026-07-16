@@ -222,7 +222,7 @@ export const albums: Album[] = [
     coverArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/90/32/c1/9032c1b4-65d7-9a7a-5b39-b986260dd52d/093624875758.jpg/600x600bb.jpg",
   },
   {
-    title: "New Amerykah Part One (4th World War)",
+    title: "New Amerykah Part Two (Return of the Ankh)",
     artist: "Erykah Badu",
     year: 2010,
     coverArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/c7/64/27/c7642714-7f61-74c4-3109-246bd790befe/10UMGIM06657.rgb.jpg/600x600bb.jpg",
