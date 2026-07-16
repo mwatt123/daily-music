@@ -1623,7 +1623,7 @@ export const albums: Album[] = [
     title: "Kick Out the Jams",
     artist: "MC5",
     year: 1968,
-    coverArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music111/v4/50/7b/a6/507ba65a-c504-cc00-231b-54703767aeb4/084247962499.jpg/600x600bb.jpg",
+    coverArtUrl: "https://m.media-amazon.com/images/I/714BFI3VQeL._UF1000,1000_QL80_.jpg",
   },
   {
     title: "Parallel Lines",

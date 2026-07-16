@@ -6,8 +6,11 @@ import {
   relativeLuminance,
   contrastRatio,
   ensureContrast,
+  extractColorsFromPixels,
 } from "./dominantColor";
 import type { Pixel } from "./dominantColor";
+
+const HEX = /^#[0-9a-f]{6}$/;
 
 describe("pickDominantColors", () => {
   it("picks the majority color as primary", () => {
@@ -177,5 +180,37 @@ describe("ensureContrast", () => {
     const result = ensureContrast(tooClose, background);
 
     expect(contrastRatio(result, background)).toBeGreaterThanOrEqual(4.5);
+  });
+});
+
+// The renderer-agnostic seam shared by the browser canvas path and the Node
+// precompute path -- exercised here directly on pixel arrays.
+describe("extractColorsFromPixels", () => {
+  it("returns hex colors whose contrast is legible", () => {
+    const pixels: Pixel[] = [
+      ...Array(80).fill({ r: 40, g: 120, b: 200, a: 255 }),
+      ...Array(20).fill({ r: 200, g: 60, b: 60, a: 255 }),
+    ];
+
+    const { primary, secondary } = extractColorsFromPixels(pixels);
+
+    expect(primary).toMatch(HEX);
+    expect(secondary).toMatch(HEX);
+  });
+
+  it("yields the FALLBACK-derived pair when no pixels qualify", () => {
+    const fromEmpty = extractColorsFromPixels([]);
+    const fromGray = extractColorsFromPixels(
+      Array(50).fill({ r: 128, g: 128, b: 128, a: 255 }), // low saturation -> skipped
+    );
+
+    expect(fromGray).toEqual(fromEmpty);
+    expect(fromEmpty.primary).toMatch(HEX);
+  });
+
+  it("is deterministic for the same pixels", () => {
+    const pixels: Pixel[] = Array(64).fill({ r: 30, g: 160, b: 90, a: 255 });
+
+    expect(extractColorsFromPixels(pixels)).toEqual(extractColorsFromPixels(pixels));
   });
 });
