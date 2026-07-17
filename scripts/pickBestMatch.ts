@@ -7,6 +7,8 @@ export interface ITunesSearchResult {
   collectionName: string;
   artworkUrl100: string;
   releaseDate: string;
+  /** Apple Music album URL; present on album collections (used for `listenUrl`). */
+  collectionViewUrl?: string;
 }
 
 export interface CoverArtMatch {
@@ -45,9 +47,19 @@ function isEditionMatch(result: ITunesSearchResult, { artist, album }: AlbumKey)
   return !suffix.includes("single");
 }
 
+/** The single best iTunes result for a key -- an exact title match preferred over
+ * an edition match -- or null. Shared by cover-art and listen-url curation so both
+ * pick the same album. */
+export function pickBestResult(results: ITunesSearchResult[], key: AlbumKey): ITunesSearchResult | null {
+  return (
+    results.find((result) => isExactMatch(result, key)) ??
+    results.find((result) => isEditionMatch(result, key)) ??
+    null
+  );
+}
+
 export function pickBestMatch(results: ITunesSearchResult[], key: AlbumKey): CoverArtMatch | null {
-  const match =
-    results.find((result) => isExactMatch(result, key)) ?? results.find((result) => isEditionMatch(result, key));
+  const match = pickBestResult(results, key);
   if (!match) return null;
 
   return {

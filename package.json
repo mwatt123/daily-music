@@ -17,7 +17,8 @@
     "curate:remove": "tsx scripts/removeAlbumsCli.ts",
     "curate:refresh-covers": "tsx scripts/refreshCoverArtCli.ts",
     "curate:add": "tsx scripts/addAlbumsCli.ts",
-    "curate:colors": "tsx scripts/precomputeColorsCli.ts"
+    "curate:colors": "tsx scripts/precomputeColorsCli.ts",
+    "curate:listen-urls": "tsx scripts/resolveListenUrlsCli.ts"
   },
   "devDependencies": {
     "@types/node": "^26.1.1",

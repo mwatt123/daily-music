@@ -6,4 +6,5 @@ dist-extension/
 Library.xml
 review-report.json
 still-wrong-covers.json
+unresolved-listen-urls.json
 *.zip
