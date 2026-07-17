@@ -1,8 +1,17 @@
 import type { Album } from "./albums";
 
-/** The trailing numeric iTunes album id in an Apple Music album URL, or null. */
+/** Odesli universal-link base: append an iTunes album id to reach the chooser. */
+const ALBUM_LINK = "https://album.link/i/";
+
+/**
+ * The trailing numeric iTunes album id in an Apple Music album URL, or null. The
+ * id is always the last path segment, so it must be terminated by the string end,
+ * a query, or a fragment -- never another `/`. (Apple slugifies a numeric *title*
+ * into the path too, e.g. `/album/7/1353635536`, so matching the first `/digits/`
+ * would grab the title, not the id.)
+ */
 function appleAlbumId(appleUrl: string): string | null {
-  const match = appleUrl.match(/\/(\d+)(?:[/?#]|$)/);
+  const match = appleUrl.match(/\/(\d+)(?:[?#]|$)/);
   return match ? match[1] : null;
 }
 
@@ -22,7 +31,7 @@ export function listenUrlFor(
     const id = appleAlbumId(album.listenUrl);
     // Universal chooser when we can read the id; otherwise the Apple album page
     // itself (still a valid link) rather than dropping to a search.
-    return id ? `https://album.link/i/${id}` : album.listenUrl;
+    return id ? `${ALBUM_LINK}${id}` : album.listenUrl;
   }
   const term = encodeURIComponent(`${album.artist} ${album.title}`);
   return `https://music.apple.com/search?term=${term}`;

@@ -22,6 +22,18 @@ describe("listenUrlFor", () => {
     ).toBe("https://album.link/i/1109714933");
   });
 
+  it("takes the trailing id even when the album's title is itself numeric", () => {
+    // Apple slugifies a numeric title into the path: /album/7/1353635536 —
+    // the id is the LAST segment, not the first numeric one.
+    expect(
+      listenUrlFor({
+        artist: "Beach House",
+        title: "7",
+        listenUrl: "https://music.apple.com/us/album/7/1353635536",
+      }),
+    ).toBe("https://album.link/i/1353635536");
+  });
+
   it("falls back to a zero-network Apple Music search URL when there is no listenUrl", () => {
     expect(listenUrlFor({ artist: "Radiohead", title: "In Rainbows" })).toBe(
       "https://music.apple.com/search?term=Radiohead%20In%20Rainbows",

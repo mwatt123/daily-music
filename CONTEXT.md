@@ -31,3 +31,7 @@ _Avoid_: Save, like, collect, pass
 **Album key**:
 An album's durable identity, used to dedupe the Crate and recognize a re-picked album as already Kept. Computed as normalized artist + `"|"` + normalized title, where normalization strips accents, lowercases, and drops every non-`[a-z0-9]` character — so minor catalog wording changes don't orphan a Kept record. Stored frozen alongside the snapshot.
 _Avoid_: Album id, slug
+
+**Universal Listen link**:
+Where the Listen affordance points: an Odesli `album.link/i/<iTunesAlbumId>` chooser page that offers the album across every major service (Spotify, Apple Music, YouTube Music, Tidal, …), so the listener opens it in their own player. Built purely from the album's baked Apple Music id — a static link, no runtime network. Albums with no baked id fall back to an Apple Music search URL.
+_Avoid_: Apple Music link (that's only the source id / the fallback, not the affordance)
