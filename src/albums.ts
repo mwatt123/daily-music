@@ -85,6 +85,7 @@ export const albums: Album[] = [
     artist: "L'Rain",
     year: 2023,
     coverArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/12/2b/8c/122b8ccd-4a6e-ecf8-bdae-1bb522f4c70e/184923134667_cover.jpg/600x600bb.jpg",
+    listenUrl: "https://music.apple.com/us/album/i-killed-your-dog/1775806031",
   },
   {
     title: "Boces",
@@ -184,6 +185,7 @@ export const albums: Album[] = [
     artist: "Sufjan Stevens",
     year: 2005,
     coverArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/47/9e/a3/479ea382-2686-3ea9-3def-d67d81fb2ee3/mzi.lhtprasx.jpg/600x600bb.jpg",
+    listenUrl: "https://music.apple.com/us/album/illinois/328074546",
   },
   {
     title: "Since I Left You",
@@ -211,6 +213,7 @@ export const albums: Album[] = [
     artist: "The Dirty Projectors",
     year: 2009,
     coverArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/92/d6/41/92d6415f-d6ad-ee9b-97c1-ecb03e860c75/mzi.xvcoqsey.jpg/600x600bb.jpg",
+    listenUrl: "https://music.apple.com/us/album/bitte-orca/318004199",
   },
   {
     title: "Crazy Rhythms",
@@ -257,6 +260,7 @@ export const albums: Album[] = [
     artist: "Erykah Badu",
     year: 2010,
     coverArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/c7/64/27/c7642714-7f61-74c4-3109-246bd790befe/10UMGIM06657.rgb.jpg/600x600bb.jpg",
+    listenUrl: "https://music.apple.com/us/album/new-amerykah-pt-2-return-of-the-ankh/1440764608",
   },
   {
     title: "Faust IV",
@@ -372,6 +376,7 @@ export const albums: Album[] = [
     artist: "Iggy And The Stooges",
     year: 1970,
     coverArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music6/v4/ea/84/3c/ea843cdb-04ca-63c1-dd30-ddf3a0b94ca9/075596066921.jpg/600x600bb.jpg",
+    listenUrl: "https://music.apple.com/us/album/fun-house/843836692",
   },
   {
     title: "Raw Power",
@@ -384,6 +389,7 @@ export const albums: Album[] = [
     artist: "Iggy And The Stooges",
     year: 1969,
     coverArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/41/19/3b/41193bb2-ffc4-043f-4ddd-128c272d8f82/mzi.qimpmkxb.jpg/600x600bb.jpg",
+    listenUrl: "https://music.apple.com/us/album/the-stooges/393789238",
   },
   {
     title: "Third",
