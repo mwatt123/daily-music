@@ -1,21 +1,22 @@
 import "./style.css";
-import { cookieStore, getVisitorId } from "./visitorId";
-import { getLocalDateString, selectDailyAlbum } from "./dailyAlbum";
+import { cookieStore } from "./visitorId";
 import { albums } from "./albums";
 import { albumColors } from "./albumColors";
-import { applyAlbumColors, renderAlbum } from "./renderAlbum";
+import { createCrate, localStorageCrateStore } from "./crate";
+import { initShelf } from "./shelf";
 
 // Wrapped in an async IIFE (rather than top-level await) so the default Vite
-// build target still applies -- reading the id from the cookie store is now
-// async to share one code path with the extension's chrome.storage backend.
-(async () => {
-  const visitorId = await getVisitorId(cookieStore);
-  const album = selectDailyAlbum(visitorId, getLocalDateString(), albums);
-
-  renderAlbum(document.querySelector<HTMLDivElement>("#app")!, album);
-
-  // Colors are precomputed at build time (see src/albumColors.ts) and shared
-  // with the extension -- no runtime canvas extraction. The page shows the
-  // style.css fallback until this applies.
-  applyAlbumColors(albumColors, album.coverArtUrl);
-})();
+// build target still applies -- reading the id from the cookie store is async to
+// share one code path with the extension's chrome.storage backend.
+//
+// The web app renders "The Shelf": today's pick plus the on-device crate. The
+// crate is backed by localStorage under a fixed key (independent of the visitor
+// id, so clearing the identity cookie doesn't wipe it). The extension entry
+// (newtabMain.ts) is deliberately unchanged -- it keeps the plain single card.
+initShelf({
+  container: document.querySelector<HTMLDivElement>("#app")!,
+  store: cookieStore,
+  crate: createCrate(localStorageCrateStore),
+  albums,
+  colors: albumColors,
+});

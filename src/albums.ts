@@ -3,6 +3,12 @@ export interface Album {
   artist: string;
   year: number;
   coverArtUrl: string;
+  /**
+   * Apple Music album URL resolved at curation time -- a pure static link (exact
+   * album, no runtime network). Optional: until an album is backfilled, the app
+   * falls back to a zero-network search URL (see `listenUrl.ts`).
+   */
+  listenUrl?: string;
 }
 
 /**

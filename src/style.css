@@ -38,6 +38,14 @@ body {
   padding: 2rem;
 }
 
+/* The web app's "Shelf" (main.ts) opts into a two-screen scrolling layout by
+ * tagging #app with .shelf. The extension's #app has no .shelf class, so it keeps
+ * the single centered card above -- the shared card classes below are untouched. */
+#app.shelf {
+  display: block;
+  padding: 0;
+}
+
 .content {
   max-width: 380px;
   width: 100%;
@@ -71,4 +79,281 @@ body {
 
 .meta {
   font-size: 0.95rem;
+}
+
+/* ---- The Shelf (web app only, scoped under #app.shelf) ------------------- */
+
+.shelf .screen {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Screen one -- today's pick, full viewport. */
+.shelf .pick-screen {
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.shelf .pick-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  max-width: 380px;
+  width: 100%;
+}
+
+/* renderAlbum draws .content inside .pick-card; its own margins already space
+ * the card, so drop the trailing one and let the flex gap meet the actions. */
+.shelf .pick-card .content {
+  margin-bottom: 0;
+}
+
+.shelf .pick-card .meta {
+  margin-bottom: 0;
+}
+
+.pick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  min-height: 3rem;
+}
+
+.listen {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: inherit;
+  opacity: 0.82;
+  border-bottom: 1.5px solid currentColor;
+  padding-bottom: 1px;
+}
+
+.listen:hover {
+  opacity: 1;
+}
+
+.btn {
+  font: inherit;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.8rem 1.6rem;
+  border-radius: 999px;
+  cursor: pointer;
+  border: 1.6px solid var(--color-secondary);
+  background: var(--color-secondary);
+  color: var(--color-primary);
+  transition: transform 120ms ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.linkbtn {
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: inherit;
+  opacity: 0.7;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 0.3rem;
+}
+
+.linkbtn:hover {
+  opacity: 1;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 0.62rem 1.05rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-secondary) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-secondary) 32%, transparent);
+  color: var(--color-secondary);
+}
+
+.scroll-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 1.4rem;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 700;
+  opacity: 0.6;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.scroll-hint .arrow {
+  font-size: 1rem;
+  animation: bob 1.8s ease-in-out infinite;
+}
+
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(4px);
+  }
+}
+
+/* Screen two -- the crate, below the fold; a subtly darker "room". */
+.shelf .crate-screen {
+  padding: 3rem 1.4rem 5rem;
+  background: color-mix(in srgb, var(--color-primary) 90%, #000);
+}
+
+.crate-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.crate-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 1.6rem;
+}
+
+.crate-head h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.crate-head .count {
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 700;
+  opacity: 0.8;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.grid figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.crate-cover {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 8px;
+  object-fit: cover;
+  background: rgba(0, 0, 0, 0.12);
+  box-shadow: 0 10px 24px -10px rgba(0, 0, 0, 0.5);
+}
+
+.grid figcaption {
+  font-size: 0.72rem;
+  line-height: 1.25;
+  opacity: 0.88;
+}
+
+.grid .crate-title {
+  font-weight: 700;
+}
+
+.fig-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.listen--sm {
+  font-size: 0.66rem;
+  border-bottom-width: 1px;
+  padding-bottom: 0;
+}
+
+.prune {
+  font: inherit;
+  font-size: 0.66rem;
+  font-weight: 700;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: inherit;
+  opacity: 0.55;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  padding: 0;
+}
+
+.prune:hover {
+  opacity: 0.9;
+}
+
+.ghost {
+  aspect-ratio: 1 / 1;
+  border-radius: 8px;
+  border: 2px dashed color-mix(in srgb, var(--color-secondary) 30%, transparent);
+  display: grid;
+  place-items: center;
+  text-align: center;
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+  opacity: 0.6;
+  padding: 0.6rem;
+  font-weight: 600;
+}
+
+.shelf :focus-visible {
+  outline: 2.5px solid var(--color-secondary);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-hint .arrow {
+    animation: none;
+  }
+  .btn {
+    transition: none;
+  }
 }

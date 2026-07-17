@@ -46,6 +46,31 @@ describe("serializeAlbums", () => {
     );
   });
 
+  it("emits the optional listenUrl line only when the album has one", () => {
+    const albums: Album[] = [
+      {
+        title: "Rocket",
+        artist: "Alex G",
+        year: 2001,
+        coverArtUrl: "a",
+        listenUrl: "https://music.apple.com/us/album/rocket/1234",
+      },
+    ];
+
+    expect(serializeAlbums(albums)).toBe(
+      `[
+  {
+    title: "Rocket",
+    artist: "Alex G",
+    year: 2001,
+    coverArtUrl: "a",
+    listenUrl: "https://music.apple.com/us/album/rocket/1234",
+  },
+];
+`,
+    );
+  });
+
   it("escapes double quotes within a title", () => {
     const albums: Album[] = [
       { title: 'Songs of "Love"', artist: "Someone", year: 2000, coverArtUrl: "a" },
