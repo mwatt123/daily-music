@@ -20,16 +20,12 @@ A new tab, a new record — one hand-picked album a day, dressed in the colors o
 ```
 One record a day, every new tab.
 
-Broken Record gives you one hand-picked album each day and themes the whole
-page to its cover art — a small detour into something worth hearing, every time
-you open a tab. Keep the ones you love in a personal crate, and play any of them
-with a tap. One record today, another tomorrow.
+One hand-picked album each day, with the whole page themed to its cover. Keep
+the ones you love in a personal crate, and play any of them with a tap.
 
-• One carefully chosen album a day — no endless feed
-• The page takes on the album's colors
-• Keep favorites in an on-device crate — private, no account
-• Listen to today's pick, or anything in your crate
-• Same pick all day, across every tab
+• One album a day — no endless feed
+• Keep favorites in an on-device crate
+• Listen to today's pick, or anything you've kept
 
 Less scrolling. More listening.
 ```
@@ -51,14 +47,11 @@ Less scrolling. More listening.
 | Small promo tile (optional) | 440×280 PNG | `store-assets/promo-tile.png` (source: `store-assets/promo-tile.svg`) |
 | Marquee promo tile (optional) | 1400×560 PNG | `store-assets/marquee-tile.png` (source: `store-assets/marquee-tile.svg`) |
 
-Screenshots 1–3 deliberately span distinct hues to show the cover-driven
-theming — a defining feature — while surfacing the Listen and Keep controls;
-screenshot 2 catches an album already in the crate, and screenshot 4 shows the
-crate itself, the collection those keeps build up. Both promo tiles use the same
-device: a "today's pick" cover card (a vinyl in a colored sleeve, title/artist
-as placeholder bars) floating on a five-hue spectrum, echoing how the new-tab
-page takes on each cover's colors. The marquee fans out three picks with
-distinct sleeve/label colors to show the daily variety.
+Screenshots 1–3 span distinct hues to show the cover-driven theming and the
+Listen + Keep controls (2 shows an album already kept); screenshot 4 shows the
+crate. Both promo tiles float a "today's pick" cover card on a five-hue
+spectrum, echoing the cover-driven colors; the marquee fans out three picks to
+show the daily variety.
 
 ## Regenerating
 
