@@ -1,8 +1,9 @@
 import type { Album } from "./albums";
 import { getLocalDateString } from "./dailyAlbum";
 
-/** localStorage key holding the whole crate blob. Fixed and independent of the
- * visitor id, so clearing the identity cookie does not wipe the crate. */
+/** Storage key holding the whole crate blob (localStorage on the web app,
+ * chrome.storage.local on the extension). Fixed and independent of the visitor-id
+ * key, so resetting the visitor id never wipes the crate. */
 export const CRATE_STORAGE_KEY = "dailyAlbum.crate";
 
 const SCHEMA_VERSION = 1;
