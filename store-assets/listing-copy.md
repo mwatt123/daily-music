@@ -12,7 +12,7 @@ Broken Record
 ## Short description (max 132 chars)
 
 ```
-A new tab, a new record — one hand-picked album a day, dressed in the colors of its cover.
+A new tab, a new record — one hand-picked album a day, kept in a crate of your favorites.
 ```
 
 ## Detailed description
@@ -20,8 +20,8 @@ A new tab, a new record — one hand-picked album a day, dressed in the colors o
 ```
 One record a day, every new tab.
 
-One hand-picked album each day, with the whole page themed to its cover. Keep
-the ones you love in a personal crate, and play any of them with a tap.
+Broken Record hands you one carefully chosen album each day. Keep the ones you
+love in a personal crate, and play any of them with a tap.
 
 • One album a day — no endless feed
 • Keep favorites in an on-device crate
@@ -47,11 +47,10 @@ Less scrolling. More listening.
 | Small promo tile (optional) | 440×280 PNG | `store-assets/promo-tile.png` (source: `store-assets/promo-tile.svg`) |
 | Marquee promo tile (optional) | 1400×560 PNG | `store-assets/marquee-tile.png` (source: `store-assets/marquee-tile.svg`) |
 
-Screenshots 1–3 span distinct hues to show the cover-driven theming and the
-Listen + Keep controls (2 shows an album already kept); screenshot 4 shows the
-crate. Both promo tiles float a "today's pick" cover card on a five-hue
-spectrum, echoing the cover-driven colors; the marquee fans out three picks to
-show the daily variety.
+Screenshots 1–3 feature three different albums and surface the Listen + Keep
+controls (2 shows one already kept); screenshot 4 shows the crate. Both promo
+tiles float a "today's pick" cover card on a colored spectrum; the marquee fans
+out three picks to show the daily variety.
 
 ## Regenerating
 
