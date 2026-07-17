@@ -24,28 +24,30 @@ export interface KeptAlbum {
 
 /**
  * A pluggable single-string-blob backend, mirroring {@link VisitorIdStore}. The
- * web app backs this with `localStorage`; tests back it with an in-memory
- * adapter. Synchronous because the only real backend (`localStorage`) is
- * synchronous and only the web app uses the crate -- the extension is untouched.
+ * web app backs this with `localStorage` (sync); the extension backs it with
+ * `chrome.storage.local` (async); tests back it with an in-memory adapter. Both
+ * `get` and `set` may be async so one Crate drives either surface -- awaiting a
+ * sync store is harmless, exactly as `getVisitorId` treats its store.
  */
 export interface CrateStore {
-  get(): string | null;
-  set(value: string): void;
+  get(): string | null | Promise<string | null>;
+  set(value: string): void | Promise<void>;
 }
 
 /**
  * The crate's small interface over the injected store. `keep`/`remove` mutate,
  * `isKept`/`list` read; all the JSON (de)serialization, dedup, snapshotting and
- * fail-safe parsing live behind it.
+ * fail-safe parsing live behind it. Every method is async so the same Crate
+ * spans a sync (`localStorage`) or async (`chrome.storage.local`) store.
  */
 export interface Crate {
   /** Snapshot today's pick into the crate. Idempotent by {@link albumKey}. */
-  keep(album: Album, keptOn?: string): void;
+  keep(album: Album, keptOn?: string): Promise<void>;
   /** Prune the record with this key; a no-op if it isn't kept. */
-  remove(key: string): void;
-  isKept(album: Pick<Album, "artist" | "title">): boolean;
+  remove(key: string): Promise<void>;
+  isKept(album: Pick<Album, "artist" | "title">): Promise<boolean>;
   /** Kept snapshots, newest first. */
-  list(): KeptAlbum[];
+  list(): Promise<KeptAlbum[]>;
 }
 
 function normalizePart(s: string): string {
@@ -83,8 +85,8 @@ function empty(): CrateData {
  * parse error or unrecognized `version` -- a corrupt or future blob can never
  * crash the page.
  */
-function read(store: CrateStore): CrateData {
-  const raw = store.get();
+async function read(store: CrateStore): Promise<CrateData> {
+  const raw = await store.get();
   if (!raw) return empty();
   try {
     const parsed = JSON.parse(raw) as Partial<CrateData>;
@@ -97,8 +99,8 @@ function read(store: CrateStore): CrateData {
   }
 }
 
-function write(store: CrateStore, data: CrateData): void {
-  store.set(JSON.stringify(data));
+async function write(store: CrateStore, data: CrateData): Promise<void> {
+  await store.set(JSON.stringify(data));
 }
 
 /**
@@ -109,9 +111,9 @@ function write(store: CrateStore, data: CrateData): void {
  */
 export function createCrate(store: CrateStore): Crate {
   return {
-    keep(album, keptOn = getLocalDateString()) {
+    async keep(album, keptOn = getLocalDateString()) {
       const key = albumKey(album);
-      const data = read(store);
+      const data = await read(store);
       if (data.keptAlbums.some((k) => k.key === key)) return; // already kept
       data.keptAlbums.push({
         key,
@@ -121,25 +123,25 @@ export function createCrate(store: CrateStore): Crate {
         coverArtUrl: album.coverArtUrl,
         keptOn,
       });
-      write(store, data);
+      await write(store, data);
     },
 
-    remove(key) {
-      const data = read(store);
+    async remove(key) {
+      const data = await read(store);
       const keptAlbums = data.keptAlbums.filter((k) => k.key !== key);
       if (keptAlbums.length !== data.keptAlbums.length) {
-        write(store, { ...data, keptAlbums });
+        await write(store, { ...data, keptAlbums });
       }
     },
 
-    isKept(album) {
+    async isKept(album) {
       const key = albumKey(album);
-      return read(store).keptAlbums.some((k) => k.key === key);
+      return (await read(store)).keptAlbums.some((k) => k.key === key);
     },
 
-    list() {
+    async list() {
       // Stored in keep order; reverse for newest-first display.
-      return read(store).keptAlbums.slice().reverse();
+      return (await read(store)).keptAlbums.slice().reverse();
     },
   };
 }

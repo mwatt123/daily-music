@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Broken Record",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Every new tab, one album worth revisiting — with the page dressed in its cover's colors.",
   "chrome_url_overrides": {
     "newtab": "newtab.html"

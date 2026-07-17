@@ -3,9 +3,9 @@ import type { ExtractedColors } from "./dominantColor";
 
 /**
  * Renders the daily album card into `container`. Shared verbatim by the web app
- * (`main.ts`) and the extension new-tab page (`newtab.ts`) so the markup has a
- * single source of truth; the two surfaces differ only in how they source the
- * visitor id and the colors, not in what they draw.
+ * and the extension new-tab page (both via `shelf.ts`) so the markup has a single
+ * source of truth; the two surfaces differ only in how they source the visitor
+ * id, the crate, and the colors, not in what they draw.
  */
 export function renderAlbum(container: HTMLElement, album: Album): void {
   container.innerHTML = `

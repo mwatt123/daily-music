@@ -7,17 +7,21 @@ the extension's actual behavior; see the hosted policy at `public/privacy.html`.
 ## Single purpose description
 
 > Broken Record replaces the browser's new tab page with a single hand-picked
-> album recommendation each day, styling the page after the album cover's colors.
-> Its single purpose is to surface one daily album to listen to.
+> album recommendation each day, styling the page after the album cover's colors,
+> and lets the visitor keep the ones they like into a personal on-device
+> collection. Its single purpose is daily album discovery: surface one album to
+> listen to and, optionally, hold onto.
 
 ## Permission justifications
 
 **`storage`**
 
-> Used to persist one randomly-generated anonymous identifier in
-> `chrome.storage.local`. This id seeds the daily album selection so the same
-> pick stays stable across new tabs opened on the same day and rotates the next
-> day. It is never transmitted off the device.
+> Used to persist two things in `chrome.storage.local`, both local-only: (1) one
+> randomly-generated anonymous identifier that seeds the daily album selection so
+> the same pick stays stable across new tabs opened on the same day and rotates
+> the next day; and (2) the visitor's "crate" — the albums they choose to keep
+> (title, artist, year, cover-image URL) — so their collection persists across
+> restarts. Neither is ever transmitted off the device.
 
 **Host permissions:** none declared. Cover images are displayed via ordinary
 `<img>` tags (allowed under the default extension CSP); the extension makes no
@@ -29,9 +33,10 @@ code is loaded or executed.
 ## Data usage — collected data
 
 **This item does not collect user data.** Under Chrome's definition, "collect"
-means transmitting data off the device. Broken Record stores only an anonymous,
-randomly-generated id locally (`chrome.storage.local`) that never leaves the
-browser profile and is sent to no one. There is no analytics or tracking.
+means transmitting data off the device. Broken Record stores an anonymous,
+randomly-generated id and the visitor's kept-album crate locally
+(`chrome.storage.local`); both stay in the browser profile, are sent to no one,
+and back a self-contained new-tab experience. There is no analytics or tracking.
 
 Leave every data-type checkbox (personally identifiable info, health, financial,
 authentication, personal communications, location, web history, user activity,

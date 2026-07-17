@@ -15,6 +15,19 @@ function fakeStore(initial: string | null = null): CrateStore & { value: string 
   };
 }
 
+/** Async variant, mirroring the extension's Promise-based chrome.storage.local. */
+function asyncFakeStore(initial: string | null = null): CrateStore & { value: string | null } {
+  return {
+    value: initial,
+    async get() {
+      return this.value;
+    },
+    async set(value) {
+      this.value = value;
+    },
+  };
+}
+
 const funeral: Album = {
   title: "Funeral",
   artist: "Arcade Fire",
@@ -51,77 +64,88 @@ describe("albumKey", () => {
 });
 
 describe("createCrate", () => {
-  it("reports an album as kept after it is kept", () => {
+  it("reports an album as kept after it is kept", async () => {
     const crate = createCrate(fakeStore());
 
-    expect(crate.isKept(funeral)).toBe(false);
-    crate.keep(funeral, "2026-07-16");
-    expect(crate.isKept(funeral)).toBe(true);
+    expect(await crate.isKept(funeral)).toBe(false);
+    await crate.keep(funeral, "2026-07-16");
+    expect(await crate.isKept(funeral)).toBe(true);
   });
 
-  it("is idempotent — keeping the same album twice stores one record", () => {
+  it("is idempotent — keeping the same album twice stores one record", async () => {
     const crate = createCrate(fakeStore());
 
-    crate.keep(funeral, "2026-07-16");
-    crate.keep(funeral, "2026-07-17");
+    await crate.keep(funeral, "2026-07-16");
+    await crate.keep(funeral, "2026-07-17");
 
-    expect(crate.list()).toHaveLength(1);
+    expect(await crate.list()).toHaveLength(1);
   });
 
-  it("removes a kept album by its key", () => {
+  it("removes a kept album by its key", async () => {
     const crate = createCrate(fakeStore());
-    crate.keep(funeral, "2026-07-16");
+    await crate.keep(funeral, "2026-07-16");
 
-    crate.remove(albumKey(funeral));
+    await crate.remove(albumKey(funeral));
 
-    expect(crate.isKept(funeral)).toBe(false);
-    expect(crate.list()).toHaveLength(0);
+    expect(await crate.isKept(funeral)).toBe(false);
+    expect(await crate.list()).toHaveLength(0);
   });
 
-  it("lists kept records newest-first", () => {
+  it("lists kept records newest-first", async () => {
     const crate = createCrate(fakeStore());
-    crate.keep(funeral, "2026-07-16");
-    crate.keep(inRainbows, "2026-07-17");
+    await crate.keep(funeral, "2026-07-16");
+    await crate.keep(inRainbows, "2026-07-17");
 
-    expect(crate.list().map((k) => k.title)).toEqual(["In Rainbows", "Funeral"]);
+    expect((await crate.list()).map((k) => k.title)).toEqual(["In Rainbows", "Funeral"]);
   });
 
-  it("stores a frozen snapshot immune to later changes to the source album", () => {
+  it("stores a frozen snapshot immune to later changes to the source album", async () => {
     const store = fakeStore();
     const source: Album = { ...funeral };
-    createCrate(store).keep(source, "2026-07-16");
+    await createCrate(store).keep(source, "2026-07-16");
 
     // The catalog later re-covers or retitles the album.
     source.coverArtUrl = "cover-changed";
     source.title = "Funeral (Remastered)";
 
-    const [kept] = createCrate(store).list();
+    const [kept] = await createCrate(store).list();
     expect(kept.coverArtUrl).toBe("cover-funeral");
     expect(kept.title).toBe("Funeral");
     expect(kept.keptOn).toBe("2026-07-16");
   });
 
-  it("persists across crate instances sharing a store, independent of any visitor id", () => {
+  it("persists across crate instances sharing a store, independent of any visitor id", async () => {
     const store = fakeStore();
-    createCrate(store).keep(funeral, "2026-07-16");
+    await createCrate(store).keep(funeral, "2026-07-16");
 
     // A fresh crate over the same blob sees the kept album — the crate carries
     // no visitor-id dependency, so clearing the identity cookie can't wipe it.
-    expect(createCrate(store).isKept(funeral)).toBe(true);
+    expect(await createCrate(store).isKept(funeral)).toBe(true);
   });
 
-  it("fails safe to an empty crate on a malformed blob", () => {
+  it("drives an async (chrome.storage-style) store the same way", async () => {
+    const crate = createCrate(asyncFakeStore());
+
+    await crate.keep(funeral, "2026-07-16");
+    await crate.keep(inRainbows, "2026-07-17");
+    await crate.remove(albumKey(funeral));
+
+    expect(await crate.isKept(funeral)).toBe(false);
+    expect((await crate.list()).map((k) => k.title)).toEqual(["In Rainbows"]);
+  });
+
+  it("fails safe to an empty crate on a malformed blob", async () => {
     const crate = createCrate(fakeStore("not json {"));
 
-    expect(crate.list()).toEqual([]);
-    expect(crate.isKept(funeral)).toBe(false);
+    expect(await crate.list()).toEqual([]);
+    expect(await crate.isKept(funeral)).toBe(false);
   });
 
-  it("fails safe to an empty crate on an unrecognized schema version", () => {
+  it("fails safe to an empty crate on an unrecognized schema version", async () => {
     const crate = createCrate(
       fakeStore(JSON.stringify({ version: 999, keptAlbums: [{ key: "x|y" }] })),
     );
 
-    expect(crate.list()).toEqual([]);
+    expect(await crate.list()).toEqual([]);
   });
 });

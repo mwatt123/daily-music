@@ -22,22 +22,34 @@
   </head>
   <body>
     <h1>Broken Record — Privacy Policy</h1>
-    <p class="updated">Last updated: 16 July 2026</p>
+    <p class="updated">Last updated: 17 July 2026</p>
 
     <p>
       <strong>Broken Record</strong> is a Chrome extension that replaces the new
-      tab page with one hand-picked album recommendation per day. This policy
-      explains exactly what it does and does not do with your data.
+      tab page with one hand-picked album recommendation per day, and lets you keep
+      the ones you like into a personal on-device collection. This policy explains
+      exactly what it does and does not do with your data.
     </p>
 
     <h2>What we collect</h2>
     <p>
-      <strong>Nothing that leaves your device.</strong> The extension generates a
-      single random, anonymous identifier and stores it locally using
-      <code>chrome.storage.local</code>. That identifier exists only to keep your
-      daily album pick stable across new tabs on a given day (and to rotate it the
-      next day). It is never transmitted to the developer or to any third party,
-      and it never leaves your browser profile.
+      <strong>Nothing that leaves your device.</strong> The extension stores two
+      things locally, using <code>chrome.storage.local</code>:
+    </p>
+    <ul>
+      <li>
+        A single random, anonymous identifier that keeps your daily album pick
+        stable across new tabs on a given day (and rotates it the next day).
+      </li>
+      <li>
+        Your <strong>crate</strong> — the albums you choose to keep, saved as their
+        title, artist, year, and cover-image address so your collection survives
+        browser restarts.
+      </li>
+    </ul>
+    <p>
+      Both are stored only in your browser profile. Neither is ever transmitted to
+      the developer or to any third party, and neither leaves your device.
     </p>
 
     <h2>No tracking or analytics</h2>
@@ -47,18 +59,23 @@
       or activity. No user data is sold or shared with anyone.
     </p>
 
-    <h2>Album artwork</h2>
+    <h2>Album artwork and listening</h2>
     <p>
       Album cover images are loaded directly from third-party image services
       (Apple/iTunes and Amazon) purely to display the artwork. As with loading any
       image on the web, those services receive standard request information such as
       your IP address. The extension itself sends them no personal data.
     </p>
+    <p>
+      Each album offers a <strong>Listen</strong> link. Following it simply opens
+      Apple Music in your browser, exactly like clicking any ordinary web link; the
+      extension sends no personal data when you do.
+    </p>
 
     <h2>Permissions</h2>
     <p>
       The extension requests a single permission, <code>storage</code>, used only
-      to save the anonymous identifier described above.
+      to save the anonymous identifier and your kept-album crate described above.
     </p>
 
     <h2>Contact</h2>

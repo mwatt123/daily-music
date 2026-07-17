@@ -12,7 +12,7 @@ describe("extension manifest", () => {
     expect(manifest.chrome_url_overrides.newtab).toBe("newtab.html");
   });
 
-  it("requests the storage permission the visitor id needs", () => {
+  it("requests the storage permission the visitor id and crate need", () => {
     expect(manifest.permissions).toContain("storage");
   });
 

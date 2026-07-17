@@ -27,8 +27,8 @@ export interface ShelfDeps {
  *
  * This layer is deliberately thin glue over the tested {@link Crate} module: it
  * owns no logic worth unit-testing, only DOM assembly and event wiring, and it
- * re-renders wholesale whenever the crate changes. The extension is untouched --
- * it keeps using `initNewTab` and the plain single-card layout.
+ * re-renders wholesale whenever the crate changes. Both surfaces share it -- the
+ * web app and the extension new-tab page differ only in their injected stores.
  */
 export async function initShelf(deps: ShelfDeps): Promise<Album> {
   const { container, store, crate, albums, colors, date } = deps;
@@ -41,8 +41,8 @@ export async function initShelf(deps: ShelfDeps): Promise<Album> {
   const listenLink = (target: Pick<Album, "artist" | "title" | "listenUrl">, extra = "") =>
     `<a class="listen${extra}" href="${listenUrlFor(target)}" target="_blank" rel="noopener">▷ Listen</a>`;
 
-  function pickActions(): string {
-    if (crate.isKept(album)) {
+  function pickActions(alreadyKept: boolean): string {
+    if (alreadyKept) {
       return `<div class="pick-actions">${listenLink(album)}<span class="chip">✓ In your crate</span><button class="linkbtn" data-act="undo">Undo</button></div>`;
     }
     return `<div class="pick-actions">${listenLink(album)}<button class="btn" data-act="keep">＋ Keep</button></div>`;
@@ -66,8 +66,9 @@ export async function initShelf(deps: ShelfDeps): Promise<Album> {
     return `<div class="grid">${kept.map(crateCell).join("")}</div>`;
   }
 
-  function render(): void {
-    const kept = crate.list();
+  async function render(): Promise<void> {
+    const kept = await crate.list();
+    const alreadyKept = kept.some((k) => k.key === albumKey(album));
     const n = kept.length;
     container.innerHTML = `
       <section class="screen pick-screen">
@@ -85,24 +86,24 @@ export async function initShelf(deps: ShelfDeps): Promise<Album> {
     // around it so the daily-card markup keeps a single source of truth.
     const pickCard = container.querySelector<HTMLElement>(".pick-card")!;
     renderAlbum(pickCard, album);
-    pickCard.insertAdjacentHTML("beforeend", pickActions());
+    pickCard.insertAdjacentHTML("beforeend", pickActions(alreadyKept));
   }
 
-  container.addEventListener("click", (event) => {
+  container.addEventListener("click", async (event) => {
     const trigger = (event.target as HTMLElement).closest<HTMLElement>("[data-act]");
     if (!trigger) return;
     switch (trigger.dataset.act) {
       case "keep":
-        crate.keep(album);
-        render();
+        await crate.keep(album);
+        await render();
         break;
       case "undo":
-        crate.remove(albumKey(album));
-        render();
+        await crate.remove(albumKey(album));
+        await render();
         break;
       case "remove":
-        crate.remove(trigger.dataset.key!);
-        render();
+        await crate.remove(trigger.dataset.key!);
+        await render();
         break;
       case "toCrate":
         container.querySelector(".crate-screen")?.scrollIntoView({ behavior: "smooth" });
@@ -110,7 +111,7 @@ export async function initShelf(deps: ShelfDeps): Promise<Album> {
     }
   });
 
-  render();
+  await render();
   // Today's colors are constant across re-renders, so apply them once. The page
   // shows the style.css fallback until this lands (no runtime canvas extraction).
   applyAlbumColors(colors, album.coverArtUrl);

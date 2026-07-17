@@ -21,7 +21,7 @@ The single album selected to represent an artist in the curated dataset — the 
 _Avoid_: Top album, best album
 
 **Crate**:
-The visitor's personal, on-device collection of albums they chose to hold onto — a wall of Kept records, stored in `localStorage` on the web app only (independent of the visitor id, so clearing the identity cookie doesn't wipe it). Purely a keepsake: it never steers which album is picked. Each entry is a frozen snapshot, so later catalog edits (re-covers, retitles, removals) leave the collection intact.
+The visitor's personal, on-device collection of albums they chose to hold onto — a wall of Kept records. Stored per-surface and independent of the visitor id (so resetting the id never wipes it): `localStorage` on the web app, `chrome.storage.local` on the extension. Because browser origins are isolated, the two surfaces keep separate crates — there is no cross-surface sync. Purely a keepsake: it never steers which album is picked. Each entry is a frozen snapshot, so later catalog edits (re-covers, retitles, removals) leave the collection intact.
 _Avoid_: Collection, library, favorites, history
 
 **Keep**:
