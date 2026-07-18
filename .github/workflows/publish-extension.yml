@@ -9,8 +9,8 @@ name: Publish extension to Chrome Web Store
 # dry-run of build + packaging + credentials with no real release. Enable that
 # before trusting the first real tag.
 #
-# ONE-TIME SETUP before the first publish (spec: mwatt123/daily-music#31,
-# research: docs/research/0029-auto-publish-cws.md):
+# ONE-TIME SETUP before the first publish (full checklist in the spec,
+# mwatt123/daily-music#31):
 #   1. Google Cloud: enable the Chrome Web Store API, configure the OAuth consent
 #      screen, create a Desktop-app OAuth client (-> client id + secret).
 #   2. Set the consent screen to "In production" -- otherwise the sensitive
@@ -39,12 +39,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: .nvmrc
           cache: npm
       - run: npm ci
       - run: npm run build:extension
       - name: Stamp version from tag (guards a strict increment)
-        run: npx tsx scripts/stampExtensionVersionCli.ts "$TAG"
+        run: npm run extension:stamp-version -- "$TAG"
         env:
           TAG: ${{ github.event.inputs.version || github.ref_name }}
       - name: Package dist-extension as a clean zip

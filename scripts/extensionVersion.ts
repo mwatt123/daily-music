@@ -27,21 +27,21 @@ function compareSemver(a: [number, number, number], b: [number, number, number])
  * version -- so CI fails fast, before an upload the Chrome Web Store would reject.
  */
 export function deriveExtensionVersion(tag: string, baseline: string): string {
-  const match = tag.match(/^v(\d+\.\d+\.\d+)$/);
+  const match = tag.match(/^v(\d+)\.(\d+)\.(\d+)$/);
   if (!match) {
     throw new Error(
       `Tag "${tag}" is not a version tag of the form vMAJOR.MINOR.PATCH (e.g. v1.3.0).`,
     );
   }
-  const version = match[1];
+  const parts: [number, number, number] = [Number(match[1]), Number(match[2]), Number(match[3])];
+  const version = parts.join(".");
 
   const parsedBaseline = parseSemver(baseline);
   if (!parsedBaseline) {
     throw new Error(`Baseline version "${baseline}" is not a valid MAJOR.MINOR.PATCH version.`);
   }
 
-  // parseSemver(version) can't be null: the tag regex already proved the shape.
-  if (compareSemver(parseSemver(version)!, parsedBaseline) <= 0) {
+  if (compareSemver(parts, parsedBaseline) <= 0) {
     throw new Error(
       `Version ${version} does not strictly increment over the published baseline ${baseline}.`,
     );
