@@ -52,11 +52,13 @@ jobs:
         # manifest.json lands at the archive root with no macOS cruft.
         run: cd dist-extension && zip -r -X ../broken-record.zip . -x "*.DS_Store"
       - name: Upload to Chrome Web Store
-        # On a tag push: --auto-publish (goes live after review). On a manual run:
-        # no flag, leaving a draft for a dry-run of everything but the go-live.
-        run: npx chrome-webstore-upload-cli@6 upload --source broken-record.zip $PUBLISH_FLAG
+        # chrome-webstore-upload-cli has no --auto-publish flag: giving it no
+        # subcommand at all uploads AND publishes in one call (auto-goes-live on
+        # approval) -- that's what a real tag push wants. The explicit "upload"
+        # subcommand uploads only, leaving a draft -- that's the manual dry-run.
+        run: npx chrome-webstore-upload-cli@4 $COMMAND --source broken-record.zip
         env:
-          PUBLISH_FLAG: ${{ github.event_name == 'push' && '--auto-publish' || '' }}
+          COMMAND: ${{ github.event_name == 'push' && '' || 'upload' }}
           EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
           PUBLISHER_ID: ${{ secrets.CWS_PUBLISHER_ID }}
           CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
