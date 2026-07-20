@@ -2,12 +2,13 @@ name: Publish extension to Chrome Web Store
 
 # Publishes the "Broken Record" extension on a deliberate version tag. Pushing
 # `v1.3.0` builds the extension, stamps 1.3.0 into the packaged manifest, uploads
-# it via the Chrome Web Store API, and lets it auto-publish once Google's review
-# passes -- no manual repackage, no dashboard upload, no manual version edit.
+# it via the Chrome Web Store API, then submits it for review -- which auto-goes-
+# live once Google approves it -- no manual repackage, no dashboard upload, no
+# manual version edit.
 #
-# A manual "Run workflow" (workflow_dispatch) uploads as a DRAFT only -- a safe
-# dry-run of build + packaging + credentials with no real release. Enable that
-# before trusting the first real tag.
+# A manual "Run workflow" (workflow_dispatch) only runs the upload step, leaving
+# a DRAFT -- a safe dry-run of build + packaging + credentials with no real
+# release and no review submission.
 #
 # ONE-TIME SETUP before the first publish (full checklist in the spec,
 # mwatt123/daily-music#31):
@@ -52,13 +53,23 @@ jobs:
         # manifest.json lands at the archive root with no macOS cruft.
         run: cd dist-extension && zip -r -X ../broken-record.zip . -x "*.DS_Store"
       - name: Upload to Chrome Web Store
-        # chrome-webstore-upload-cli has no --auto-publish flag: giving it no
-        # subcommand at all uploads AND publishes in one call (auto-goes-live on
-        # approval) -- that's what a real tag push wants. The explicit "upload"
-        # subcommand uploads only, leaving a draft -- that's the manual dry-run.
-        run: npx chrome-webstore-upload-cli@4 $COMMAND --source broken-record.zip
+        # Always just uploads -- leaves a DRAFT. On a manual dry-run that's the
+        # end of it. On a real tag push, the next step submits this same upload
+        # for review.
+        run: npx chrome-webstore-upload-cli@4 upload --source broken-record.zip
         env:
-          COMMAND: ${{ github.event_name == 'push' && '' || 'upload' }}
+          EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
+          PUBLISHER_ID: ${{ secrets.CWS_PUBLISHER_ID }}
+          CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+      - name: Publish (submit for review; auto-goes-live on approval)
+        # Step-level `if:`, not an inline `&&`/`||` expression -- GitHub Actions
+        # treats an empty string as falsy, so `event_name == 'push' && '' || X`
+        # silently always resolves to X. A step condition has no such trap.
+        if: github.event_name == 'push'
+        run: npx chrome-webstore-upload-cli@4 publish --extension-id "$EXTENSION_ID"
+        env:
           EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
           PUBLISHER_ID: ${{ secrets.CWS_PUBLISHER_ID }}
           CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
