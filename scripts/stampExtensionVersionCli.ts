@@ -13,7 +13,7 @@ import { deriveExtensionVersion } from "./extensionVersion";
 // committed extension/manifest.json, whose version is only a "load unpacked" dev
 // default -- so the guard compares against what is actually published. Bump this
 // when raising the floor; the store itself is the final arbiter of monotonicity.
-const LAST_PUBLISHED_VERSION = "1.2.0";
+const LAST_PUBLISHED_VERSION = "1.3.1";
 
 const tag = process.argv[2] ?? process.env.GITHUB_REF_NAME;
 if (!tag) {
