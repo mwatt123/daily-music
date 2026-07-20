@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "build:extension": "tsc && vite build --config vite.config.extension.ts",
+    "extension:stamp-version": "tsx scripts/stampExtensionVersionCli.ts",
     "preview": "vite preview",
     "test": "vitest run",
     "curate:extract": "tsx scripts/extractPlayCounts.ts",
